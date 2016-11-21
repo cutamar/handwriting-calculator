@@ -3,31 +3,32 @@ $(document).ready(function()
 
     function add(num1, num2) 
     {
-        return num1 + num2;
+        return num1.plus(num2);
     }
 
     function sub(num1, num2) 
     {
-        return num1 - num2;
+        return num1.minus(num2);
     }
 
     function mul(num1, num2) 
     {
-        return num1 * num2;
+        return num1.times(num2);
     }
 
     function div(num1, num2) 
     {
-        return num1 / num2;
+        return num1.div(num2);
     }
 
     function clearVariables() 
     {
-        num1 = null; 
-        num2 = null; 
+        num1 = new Big(0); 
+        num2 = new Big(0); 
         operator = null;
         result = null;
         firstNumberEntered = false;
+        decimalMarkUsed = false;
     }
 
     function changeDisplayTo(displayText)
@@ -44,11 +45,11 @@ $(document).ready(function()
     {
         if(!firstNumberEntered)
         {
-            num1 = num;
+            num1 = new Big(num);
         }
         else
         {
-            num2 = num;
+            num2 = new Big(num);
         }
     }
 
@@ -66,7 +67,12 @@ $(document).ready(function()
 
     function removeLastFromString(text)
     {
-        return text.substring(0, text.length - 1);
+        if(text.substring(text.length - 1, text.length) === ".")
+            decimalMarkUsed = false;
+        if(text.length == 1)
+            return "0";
+        else
+            return text.substring(0, text.length - 1);
     }
 
     function updateTape() 
@@ -75,17 +81,25 @@ $(document).ready(function()
         for (var i = 0; i < allCalculations.length; i++) $("#tape-list").append("<li>" + allCalculations[i].toString() + "</li>")
     }
 
-    var num1, num2 , operator, result; 
+    var num1 = new Big(0), num2 = new Big(0); 
+    var operator, result; 
     var allCalculations = [];
     var calculated = false;
     var firstNumberEntered = false;
+    var decimalMarkUsed = false;
     var selectedCalculationMethod;
 
-    $("#keys button.number").on("click", function() 
+    $("#keys button.number").on("click", keyClicked);
+    $("#keys button.operator").on("click", operatorClicked);
+    $("button#equals").on("click", equalClicked)
+    $("#tape").on("click", tapeToggle);
+    $("#clear-tape").on("click", clearTape);
+
+    function keyClicked() 
     {
         var num = $(this).text();
         var displayText = getDisplayText();
-        if(displayText === "0" || displayText === "+" || displayText === "-" || displayText === "*" || displayText === "/" || calculated)
+        if((displayText === "0" && num !== ".")|| displayText === "+" || displayText === "-" || displayText === "*" || displayText === "/" || calculated)
         {
             changeDisplayTo(num);
             if(calculated)
@@ -93,42 +107,68 @@ $(document).ready(function()
         }
         else
         {
-            changeDisplayTo(getDisplayText() + num);
+            if(num === ".")
+            {
+                if(!decimalMarkUsed)
+                    changeDisplayTo(getDisplayText() + num);
+                decimalMarkUsed = true;
+            }
+            else
+            {
+                changeDisplayTo(getDisplayText() + num);
+            }
         }
-        setCurrentNum(parseFloat(getDisplayText()));
-    });
+        setCurrentNum(getDisplayText());
+    }
 
-    $("#keys button.operator").on("click", function() 
+    function operatorClicked() 
     {
-        firstNumberEntered = true;
-        switch (operator = $(this).text()) {
+        switch ($(this).text()) 
+        {
             case "+":
                 changeDisplayTo("+");
+                operator = $(this).text()
                 selectedCalculationMethod = add;
+                firstNumberEntered = true;
+                decimalMarkUsed = false;
                 break;
             case "-":
                 changeDisplayTo("-");
+                operator = $(this).text()
                 selectedCalculationMethod = sub;
+                firstNumberEntered = true;
+                decimalMarkUsed = false;
                 break;
             case "*":
                 changeDisplayTo("*");
+                operator = $(this).text()
                 selectedCalculationMethod = mul;
+                firstNumberEntered = true;
+                decimalMarkUsed = false;
                 break;
             case "/":
                 changeDisplayTo("/");
+                operator = $(this).text()
                 selectedCalculationMethod = div;
+                firstNumberEntered = true;
+                decimalMarkUsed = false;
                 break;
             case "C":
                 changeDisplayTo("0");
                 clearVariables();
                 break;
             case "<":
-                changeDisplayTo(removeLastFromString(getCurrentNum().toString()));
-                setCurrentNum(parseFloat(getDisplayText()));
+                changeDisplayTo(removeLastFromString(getDisplayText()));
+                setCurrentNum(getDisplayText());
+                break;
+            case "+/-":
+                changeDisplayTo(getCurrentNum().times(-1).toString());
+                setCurrentNum(getCurrentNum().times(-1));
+                break;
         }
-    });
-
-    $("button#equals").on("click", function() 
+    }
+    
+    function equalClicked() 
     {
         result = selectedCalculationMethod(num1, num2);
         changeDisplayTo(result);
@@ -136,19 +176,19 @@ $(document).ready(function()
         updateTape();
         clearVariables();  
         calculated = true;      
-    });
+    }
     
-    $("#tape").on("click", function() 
+    function tapeToggle() 
     {
         $(this).hasClass("active") ? $(this).removeClass("active") : $(this).addClass("active"), $("#tape-content").slideToggle()
-    });
-    
-    $("#clear-tape").on("click", function() 
+    }
+
+    function clearTape() 
     {
         $("#tape-list").empty("li"); 
         allCalculations = [];
         updateTape();
-    });
+    }
 
     // Removes focus of the button.
     $("button").click(function(event) 

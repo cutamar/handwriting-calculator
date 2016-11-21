@@ -235,14 +235,6 @@ body {
     height: 20%
 }
 
-#clear {
-    height: 100%;
-    width: 25%;
-    display: block;
-    float: left;
-    border-top: none
-}
-
 #display {
     height: 100%;
     width: 100%;
@@ -298,6 +290,11 @@ button:active {
 
 button:nth-child(4n) {
     border-right: none
+}
+
+#clear-tape {
+    border-bottom: 1px solid #fff;
+    border-left: 1px solid #fff;
 }
 
 #tape {
