@@ -261,6 +261,10 @@ body {
     transform: translateY(-50%)
 }
 
+#simple-board div {
+    position: absolute;
+}
+
 #keys {
     height: 80%
 }
