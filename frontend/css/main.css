@@ -235,6 +235,18 @@ body {
     height: 20%
 }
 
+#keys-upper-part {
+    height: 16%
+}
+
+#drawing-board {
+    height: 64%;
+}
+
+#keys-lower-part {
+    height: 64%;
+}
+
 #display {
     height: 100%;
     width: 100%;
@@ -261,16 +273,16 @@ body {
     transform: translateY(-50%)
 }
 
-#simple-board div {
-    position: absolute;
+#keys-upper-part button {
+    height: 100%;
+    width: 25%;
+    display: block;
+    float: left;
+    margin-right: 0
 }
 
-#keys {
-    height: 80%
-}
-
-#keys button {
-    height: 20%;
+#keys-lower-part button {
+    height: 25%;
     width: 25%;
     display: block;
     float: left;

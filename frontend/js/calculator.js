@@ -75,10 +75,36 @@ $(document).ready(function()
             return text.substring(0, text.length - 1);
     }
 
+    function toggleMode()
+    {
+        if(normalMode)
+        {
+            $("#keys-lower-part").hide();
+            $("#drawing-board").show();
+            createDrawingBoard();
+            normalMode = false;
+        }
+        else
+        {
+            $("#drawing-board").hide();
+            $("#keys-lower-part").show();
+            normalMode = true;
+        }
+    }
+
     function updateTape() 
     {
         $("#tape-list").empty("li"), allCalculations.length ? $("#tape-content span").text("Your calculations.") : $("#tape-content span").text("No calculations have been made.");
         for (var i = 0; i < allCalculations.length; i++) $("#tape-list").append("<li>" + allCalculations[i].toString() + "</li>")
+    }
+
+    function createDrawingBoard()
+    {
+        drawingBoard = new DrawingBoard.Board('drawing-board', {
+        size: 30,
+  	    controls: false,
+	    webStorage: false
+    });
     }
 
     var num1 = new Big(0), num2 = new Big(0); 
@@ -88,12 +114,19 @@ $(document).ready(function()
     var firstNumberEntered = false;
     var decimalMarkUsed = false;
     var selectedCalculationMethod;
+    var normalMode = true;
+    var drawingBoard;
 
-    $("#keys button.number").on("click", keyClicked);
-    $("#keys button.operator").on("click", operatorClicked);
+    $("#keys-upper-part button.number").on("click", keyClicked);
+    $("#keys-lower-part button.number").on("click", keyClicked);
+    $("#keys-upper-part button.operator").on("click", operatorClicked);
+    $("#keys-lower-part button.operator").on("click", operatorClicked);
     $("button#equals").on("click", equalClicked)
     $("#tape").on("click", tapeToggle);
     $("#clear-tape").on("click", clearTape);
+
+    // resize the canvas to fill browser window dynamically
+    window.addEventListener('resize', createDrawingBoard, false);
 
     function keyClicked() 
     {
@@ -165,6 +198,9 @@ $(document).ready(function()
                 changeDisplayTo(getCurrentNum().times(-1).toString());
                 setCurrentNum(getCurrentNum().times(-1));
                 break;
+            case "ABC":
+                toggleMode();
+                break;
         }
     }
     
@@ -189,6 +225,9 @@ $(document).ready(function()
         allCalculations = [];
         updateTape();
     }
+
+    // Hide drawing board, because we are always starting in normal mode
+    $("#drawing-board").hide();
 
     // Removes focus of the button.
     $("button").click(function(event) 
