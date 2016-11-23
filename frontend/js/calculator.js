@@ -82,6 +82,7 @@ $(document).ready(function()
             $("#keys-lower-part").hide();
             $("#drawing-board").show();
             createDrawingBoard();
+            drawBounds();
             normalMode = false;
         }
         else
@@ -105,6 +106,29 @@ $(document).ready(function()
   	    controls: false,
 	    webStorage: false
     });
+    }
+
+    function drawBoundingBox()
+    {
+        var canvas = document.getElementsByTagName("canvas")[0];
+        var canvas2d = document.getElementsByTagName("canvas")[0].getContext("2d");
+        var longest = canvas.offsetWidth > canvas.offsetHeight ? canvas.offsetWidth : canvas.offsetHeight;
+        var shortest = canvas.offsetWidth < canvas.offsetHeight ? canvas.offsetWidth : canvas.offsetHeight;  
+        if(canvas.offsetWidth > canvas.offsetHeight)
+        {
+            canvas2d.rect((longest-shortest)/2,0,shortest,shortest);
+        }
+        else
+        {
+            canvas2d.rect(0,(longest-shortest)/2,shortest,shortest);
+        }
+        var lastLineWidth = canvas2d.lineWidth;
+        var lastStrokeStyle = canvas2d.strokeStyle;
+        canvas2d.lineWidth = 1;
+        canvas2d.strokeStyle = "#29b6f6"
+        canvas2d.stroke();
+        canvas2d.lineWidth = lastLineWidth;
+        canvas2d.strokeStyle = lastStrokeStyle;
     }
 
     var num1 = new Big(0), num2 = new Big(0); 
