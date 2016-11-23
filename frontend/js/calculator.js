@@ -82,7 +82,6 @@ $(document).ready(function()
             $("#keys-lower-part").hide();
             $("#drawing-board").show();
             createDrawingBoard();
-            drawBounds();
             normalMode = false;
         }
         else
@@ -106,6 +105,7 @@ $(document).ready(function()
   	    controls: false,
 	    webStorage: false
     });
+        drawBoundingBox();
     }
 
     function drawBoundingBox()
@@ -113,14 +113,19 @@ $(document).ready(function()
         var canvas = document.getElementsByTagName("canvas")[0];
         var canvas2d = document.getElementsByTagName("canvas")[0].getContext("2d");
         var longest = canvas.offsetWidth > canvas.offsetHeight ? canvas.offsetWidth : canvas.offsetHeight;
-        var shortest = canvas.offsetWidth < canvas.offsetHeight ? canvas.offsetWidth : canvas.offsetHeight;  
+        var shortest = canvas.offsetWidth < canvas.offsetHeight ? canvas.offsetWidth : canvas.offsetHeight;
+        boundingBoxSize = shortest;  
         if(canvas.offsetWidth > canvas.offsetHeight)
         {
-            canvas2d.rect((longest-shortest)/2,0,shortest,shortest);
+            xStart = (longest-shortest)/2;
+            yStart = 0;
+            canvas2d.rect(xStart, yStart, boundingBoxSize, boundingBoxSize);
         }
         else
         {
-            canvas2d.rect(0,(longest-shortest)/2,shortest,shortest);
+            xStart = 0;
+            yStart = (longest-shortest)/2;
+            canvas2d.rect(xStart, yStart, boundingBoxSize, boundingBoxSize);
         }
         var lastLineWidth = canvas2d.lineWidth;
         var lastStrokeStyle = canvas2d.strokeStyle;
@@ -129,6 +134,22 @@ $(document).ready(function()
         canvas2d.stroke();
         canvas2d.lineWidth = lastLineWidth;
         canvas2d.strokeStyle = lastStrokeStyle;
+    }
+
+    function getImage()
+    {
+        var canvas = document.getElementsByTagName("canvas")[0];
+        var canvas2d = document.getElementsByTagName("canvas")[0].getContext("2d");
+        var imgData = canvas2d.getImageData(xStart, yStart, boundingBoxSize, boundingBoxSize);
+        var newCanvas = document.createElement("canvas");
+        newCanvas.width = boundingBoxSize;
+        newCanvas.height = boundingBoxSize;
+        newCanvas.getContext("2d").putImageData(imgData, 0, 0);
+        newCanvas.getContext("2d").lineWidth = 3;
+        newCanvas.getContext("2d").strokeStyle = "#ffffff"
+        newCanvas.getContext("2d").strokeRect(0, 0, boundingBoxSize, boundingBoxSize);
+        var img = newCanvas.toDataURL("image/png");
+        return img;
     }
 
     var num1 = new Big(0), num2 = new Big(0); 
@@ -140,6 +161,7 @@ $(document).ready(function()
     var selectedCalculationMethod;
     var normalMode = true;
     var drawingBoard;
+    var boundingBoxSize = 0, xStart = 0, yStart = 0;
 
     $("#keys-upper-part button.number").on("click", keyClicked);
     $("#keys-lower-part button.number").on("click", keyClicked);
@@ -209,6 +231,7 @@ $(document).ready(function()
                 selectedCalculationMethod = div;
                 firstNumberEntered = true;
                 decimalMarkUsed = false;
+                getImage();
                 break;
             case "C":
                 changeDisplayTo("0");
