@@ -75,10 +75,81 @@ $(document).ready(function()
             return text.substring(0, text.length - 1);
     }
 
+    function toggleMode()
+    {
+        if(normalMode)
+        {
+            $("#keys-lower-part").hide();
+            $("#drawing-board").show();
+            createDrawingBoard();
+            normalMode = false;
+        }
+        else
+        {
+            $("#drawing-board").hide();
+            $("#keys-lower-part").show();
+            normalMode = true;
+        }
+    }
+
     function updateTape() 
     {
         $("#tape-list").empty("li"), allCalculations.length ? $("#tape-content span").text("Your calculations.") : $("#tape-content span").text("No calculations have been made.");
         for (var i = 0; i < allCalculations.length; i++) $("#tape-list").append("<li>" + allCalculations[i].toString() + "</li>")
+    }
+
+    function createDrawingBoard()
+    {
+        drawingBoard = new DrawingBoard.Board('drawing-board', {
+        size: 30,
+  	    controls: false,
+	    webStorage: false
+    });
+        drawBoundingBox();
+    }
+
+    function drawBoundingBox()
+    {
+        var canvas = document.getElementsByTagName("canvas")[0];
+        var canvas2d = document.getElementsByTagName("canvas")[0].getContext("2d");
+        var longest = canvas.offsetWidth > canvas.offsetHeight ? canvas.offsetWidth : canvas.offsetHeight;
+        var shortest = canvas.offsetWidth < canvas.offsetHeight ? canvas.offsetWidth : canvas.offsetHeight;
+        boundingBoxSize = shortest;  
+        if(canvas.offsetWidth > canvas.offsetHeight)
+        {
+            xStart = (longest-shortest)/2;
+            yStart = 0;
+            canvas2d.rect(xStart, yStart, boundingBoxSize, boundingBoxSize);
+        }
+        else
+        {
+            xStart = 0;
+            yStart = (longest-shortest)/2;
+            canvas2d.rect(xStart, yStart, boundingBoxSize, boundingBoxSize);
+        }
+        var lastLineWidth = canvas2d.lineWidth;
+        var lastStrokeStyle = canvas2d.strokeStyle;
+        canvas2d.lineWidth = 1;
+        canvas2d.strokeStyle = "#29b6f6"
+        canvas2d.stroke();
+        canvas2d.lineWidth = lastLineWidth;
+        canvas2d.strokeStyle = lastStrokeStyle;
+    }
+
+    function getImage()
+    {
+        var canvas = document.getElementsByTagName("canvas")[0];
+        var canvas2d = document.getElementsByTagName("canvas")[0].getContext("2d");
+        var imgData = canvas2d.getImageData(xStart, yStart, boundingBoxSize, boundingBoxSize);
+        var newCanvas = document.createElement("canvas");
+        newCanvas.width = boundingBoxSize;
+        newCanvas.height = boundingBoxSize;
+        newCanvas.getContext("2d").putImageData(imgData, 0, 0);
+        newCanvas.getContext("2d").lineWidth = 3;
+        newCanvas.getContext("2d").strokeStyle = "#ffffff"
+        newCanvas.getContext("2d").strokeRect(0, 0, boundingBoxSize, boundingBoxSize);
+        var img = newCanvas.toDataURL("image/png");
+        return img;
     }
 
     var num1 = new Big(0), num2 = new Big(0); 
@@ -88,12 +159,20 @@ $(document).ready(function()
     var firstNumberEntered = false;
     var decimalMarkUsed = false;
     var selectedCalculationMethod;
+    var normalMode = true;
+    var drawingBoard;
+    var boundingBoxSize = 0, xStart = 0, yStart = 0;
 
-    $("#keys button.number").on("click", keyClicked);
-    $("#keys button.operator").on("click", operatorClicked);
+    $("#keys-upper-part button.number").on("click", keyClicked);
+    $("#keys-lower-part button.number").on("click", keyClicked);
+    $("#keys-upper-part button.operator").on("click", operatorClicked);
+    $("#keys-lower-part button.operator").on("click", operatorClicked);
     $("button#equals").on("click", equalClicked)
     $("#tape").on("click", tapeToggle);
     $("#clear-tape").on("click", clearTape);
+
+    // resize the canvas to fill browser window dynamically
+    window.addEventListener('resize', createDrawingBoard, false);
 
     function keyClicked() 
     {
@@ -152,6 +231,7 @@ $(document).ready(function()
                 selectedCalculationMethod = div;
                 firstNumberEntered = true;
                 decimalMarkUsed = false;
+                getImage();
                 break;
             case "C":
                 changeDisplayTo("0");
@@ -164,6 +244,9 @@ $(document).ready(function()
             case "+/-":
                 changeDisplayTo(getCurrentNum().times(-1).toString());
                 setCurrentNum(getCurrentNum().times(-1));
+                break;
+            case "ABC":
+                toggleMode();
                 break;
         }
     }
@@ -189,6 +272,9 @@ $(document).ready(function()
         allCalculations = [];
         updateTape();
     }
+
+    // Hide drawing board, because we are always starting in normal mode
+    $("#drawing-board").hide();
 
     // Removes focus of the button.
     $("button").click(function(event) 
