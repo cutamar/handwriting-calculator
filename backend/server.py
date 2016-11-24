@@ -20,4 +20,4 @@ def handle_source(json_data):
     #socketio.emit('echo', {'echo': 'Server Says: '+text})
 
 if __name__ == "__main__":
-    socketio.run(app)
+    socketio.run(app, "0.0.0.0", 5000)
