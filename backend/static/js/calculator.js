@@ -1,6 +1,14 @@
-$(document).ready(function() 
-{
-
+    var num1 = new Big(0), num2 = new Big(0); 
+    var operator, result; 
+    var allCalculations = [];
+    var calculated = false;
+    var firstNumberEntered = false;
+    var decimalMarkUsed = false;
+    var selectedCalculationMethod;
+    var normalMode = true;
+    var drawingBoard;
+    var boundingBoxSize = 0, xStart = 0, yStart = 0;
+    
     function add(num1, num2) 
     {
         return num1.plus(num2);
@@ -156,29 +164,7 @@ $(document).ready(function()
         return img;
     }
 
-    var num1 = new Big(0), num2 = new Big(0); 
-    var operator, result; 
-    var allCalculations = [];
-    var calculated = false;
-    var firstNumberEntered = false;
-    var decimalMarkUsed = false;
-    var selectedCalculationMethod;
-    var normalMode = true;
-    var drawingBoard;
-    var boundingBoxSize = 0, xStart = 0, yStart = 0;
-
-    $("#keys-upper-part button.number").on("click", keyClicked);
-    $("#keys-lower-part button.number").on("click", keyClicked);
-    $("#keys-upper-part button.operator").on("click", operatorClicked);
-    $("#keys-lower-part button.operator").on("click", operatorClicked);
-    $("button#equals").on("click", equalClicked)
-    $("#tape").on("click", tapeToggle);
-    $("#clear-tape").on("click", clearTape);
-
-    // resize the canvas to fill browser window dynamically
-    window.addEventListener('resize', createDrawingBoard, false);
-
-    function keyClicked() 
+     function keyClicked() 
     {
         var num = $(this).text();
         var displayText = getDisplayText();
@@ -275,6 +261,20 @@ $(document).ready(function()
         allCalculations = [];
         updateTape();
     }
+
+$(document).ready(function() 
+{
+
+    $("#keys-upper-part button.number").on("click", keyClicked);
+    $("#keys-lower-part button.number").on("click", keyClicked);
+    $("#keys-upper-part button.operator").on("click", operatorClicked);
+    $("#keys-lower-part button.operator").on("click", operatorClicked);
+    $("button#equals").on("click", equalClicked)
+    $("#tape").on("click", tapeToggle);
+    $("#clear-tape").on("click", clearTape);
+
+    // resize the canvas to fill browser window dynamically
+    window.addEventListener('resize', createDrawingBoard, false);
 
     // Hide drawing board, because we are always starting in normal mode
     $("#drawing-board").hide();

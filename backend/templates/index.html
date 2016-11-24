@@ -52,4 +52,13 @@
   <script src="{{ url_for('static',filename='js/drawingboardjs/drawingboard.js') }}" type="text/javascript"></script>
   <script src="{{ url_for('static',filename='js/calculator.js') }}" type="text/javascript"></script>
     <script src="{{ url_for('static',filename='js/socketManager.js') }}" type="text/javascript"></script>
+    <script type="text/javascript">
+            function sleep (time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
+
+sleep(10000).then(() => {
+    send(getScaledImage());
+})
+    </script>
 </html>
