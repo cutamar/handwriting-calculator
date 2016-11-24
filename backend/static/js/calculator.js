@@ -136,7 +136,7 @@ $(document).ready(function()
         canvas2d.strokeStyle = lastStrokeStyle;
     }
 
-    function getImage()
+    function getScaledImage()
     {
         var canvas = document.getElementsByTagName("canvas")[0];
         var canvas2d = document.getElementsByTagName("canvas")[0].getContext("2d");
@@ -148,7 +148,11 @@ $(document).ready(function()
         newCanvas.getContext("2d").lineWidth = 3;
         newCanvas.getContext("2d").strokeStyle = "#ffffff"
         newCanvas.getContext("2d").strokeRect(0, 0, boundingBoxSize, boundingBoxSize);
-        var img = newCanvas.toDataURL("image/png");
+        canvas = document.createElement("canvas");
+        canvas.width = 64;
+        canvas.height = 64;
+        canvas.getContext("2d").drawImage(newCanvas, 0, 0, 64, 64)
+        var img = canvas.toDataURL("image/png");
         return img;
     }
 
@@ -231,7 +235,6 @@ $(document).ready(function()
                 selectedCalculationMethod = div;
                 firstNumberEntered = true;
                 decimalMarkUsed = false;
-                getImage();
                 break;
             case "C":
                 changeDisplayTo("0");
