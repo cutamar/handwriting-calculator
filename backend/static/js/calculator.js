@@ -157,9 +157,9 @@
         newCanvas.getContext("2d").strokeStyle = "#ffffff"
         newCanvas.getContext("2d").strokeRect(0, 0, boundingBoxSize, boundingBoxSize);
         canvas = document.createElement("canvas");
-        canvas.width = 64;
-        canvas.height = 64;
-        canvas.getContext("2d").drawImage(newCanvas, 0, 0, 64, 64)
+        canvas.width = 32;
+        canvas.height = 32;
+        canvas.getContext("2d").drawImage(newCanvas, 0, 0, 32, 32)
         var img = canvas.toDataURL("image/png");
         return img;
     }
