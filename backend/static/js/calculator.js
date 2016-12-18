@@ -90,12 +90,14 @@
             $("#keys-lower-part").hide();
             $("#drawing-board").show();
             createDrawingBoard();
+            $("#3").text("Wrong?");
             normalMode = false;
         }
         else
         {
             $("#drawing-board").hide();
             $("#keys-lower-part").show();
+            $("#3").text("/");
             normalMode = true;
         }
     }
