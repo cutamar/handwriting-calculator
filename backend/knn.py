@@ -1,29 +1,5 @@
 import numpy as np
 from collections import Counter
-import time
-from PIL import Image
-
-# load csv files to numpy arrays
-def load_data():
-    train_data = open("train.csv").read()
-    train_data = train_data.split("\n")[1:-1]
-    train_data = [i.split(",") for i in train_data]
-    print(len(train_data))
-    X_train = np.array([[int(i[j]) for j in range(1,len(i))] for i in train_data])
-    y_train = np.array([int(i[0]) for i in train_data])
-
-    print(X_train.shape, y_train.shape)
-
-    # test_data = open(data_dir + "test.csv").read()
-    # test_data = test_data.split("\n")[1:-1]
-    # test_data = [i.split(",") for i in test_data]
-    # # print(len(test_data))
-    # X_test = np.array([[int(i[j]) for j in range(0,len(i))] for i in test_data])
-
-    # # print(X_test.shape)
-
-    return X_train, y_train#, X_test
-
 
 class simple_knn():
     "a simple kNN with L2 distance"
@@ -67,22 +43,3 @@ class simple_knn():
         dists = np.sqrt(-2 * dot_pro + sum_square_train + np.matrix(sum_square_test).T)
 
         return(dists)
-
-X_train, y_train = load_data()
-
-# predict labels for batch_size number of test images at a time.
-batch_size = 2000
-# k = 3
-k = 1
-classifier = simple_knn()
-classifier.train(X_train, y_train)
-
-img = Image.open('test.png')
-arr = np.asarray(img.convert('L'))
-arr = np.reshape(arr, (1,1024))
-np.set_printoptions(threshold=np.nan)
-arr = np.insert(arr, [1], arr[0])
-arr = np.reshape(arr, (2,1024))
-print(arr)
-predicted = classifier.predict(arr, k)
-print("Predicted: " + str(predicted))

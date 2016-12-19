@@ -1,7 +1,8 @@
 var socket;
 
 function onReceived(data){
-    console.log(data.echo);
+    console.log(parseInt(data.echo));
+    keyClicked(parseInt(data.echo));
 }
 
 function send(img){

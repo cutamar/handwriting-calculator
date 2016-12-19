@@ -90,7 +90,7 @@
             $("#keys-lower-part").hide();
             $("#drawing-board").show();
             createDrawingBoard();
-            $("#3").text("Wrong?");
+            $("#3").text("Predict");
             normalMode = false;
         }
         else
@@ -146,6 +146,19 @@
         canvas2d.strokeStyle = lastStrokeStyle;
     }
 
+    function clearDrawingBoard()
+    {
+        var canvas = document.getElementsByTagName("canvas")[0];
+        var canvas2d = document.getElementsByTagName("canvas")[0].getContext("2d");
+        canvas2d.beginPath();
+        canvas2d.rect(0, 0, canvas.width, canvas.height);
+        var lastStrokeStyle = canvas2d.strokeStyle;
+        canvas2d.strokeStyle = "#ffffff";
+        canvas2d.fill(); 
+        canvas2d.strokeStyle = lastStrokeStyle;
+        drawBoundingBox();
+    }
+
     function getScaledImage()
     {
         var canvas = document.getElementsByTagName("canvas")[0];
@@ -166,9 +179,12 @@
         return img;
     }
 
-     function keyClicked() 
+     function keyClicked(key = "-1") 
     {
-        var num = $(this).text();
+        if(key === "-1")
+            var num = $(this).text();
+        else
+            var num = key.toString();
         var displayText = getDisplayText();
         if((displayText === "0" && num !== ".")|| displayText === "+" || displayText === "-" || displayText === "*" || displayText === "/" || calculated)
         {
@@ -238,6 +254,10 @@
                 break;
             case "ABC":
                 toggleMode();
+                break;
+            case "Predict":
+                send(getScaledImage());
+                clearDrawingBoard();
                 break;
         }
     }
