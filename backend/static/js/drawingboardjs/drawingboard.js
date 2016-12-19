@@ -842,6 +842,7 @@ DrawingBoard.Board.prototype = {
 
 		this.dom.$canvas.on('mouseup touchend', $.proxy(function(e) {
 			this._onInputStop(e, this._getInputCoords(e) );
+			
 		}, this));
 
 		this.dom.$canvas.on('mouseover', $.proxy(function(e) {
