@@ -179,12 +179,11 @@
         return img;
     }
 
-     function keyClicked(key = "-1") 
+     function keyClicked(e, num = "none") 
     {
-        if(key === "-1")
-            var num = $(this).text();
-        else
-            var num = key.toString();
+        if(num === "none")
+            num = $(this).text();
+        console.log(num);
         var displayText = getDisplayText();
         if((displayText === "0" && num !== ".")|| displayText === "+" || displayText === "-" || displayText === "*" || displayText === "/" || calculated)
         {
@@ -208,34 +207,36 @@
         setCurrentNum(getDisplayText());
     }
 
-    function operatorClicked() 
+    function operatorClicked(e, op = "none") 
     {
-        switch ($(this).text()) 
+        if(op === "none")
+            op = $(this).text();
+        switch (op) 
         {
             case "+":
                 changeDisplayTo("+");
-                operator = $(this).text()
+                operator = op;
                 selectedCalculationMethod = add;
                 firstNumberEntered = true;
                 decimalMarkUsed = false;
                 break;
             case "-":
                 changeDisplayTo("-");
-                operator = $(this).text()
+                operator = op;
                 selectedCalculationMethod = sub;
                 firstNumberEntered = true;
                 decimalMarkUsed = false;
                 break;
             case "*":
                 changeDisplayTo("*");
-                operator = $(this).text()
+                operator = op;
                 selectedCalculationMethod = mul;
                 firstNumberEntered = true;
                 decimalMarkUsed = false;
                 break;
             case "/":
                 changeDisplayTo("/");
-                operator = $(this).text()
+                operator = op;
                 selectedCalculationMethod = div;
                 firstNumberEntered = true;
                 decimalMarkUsed = false;

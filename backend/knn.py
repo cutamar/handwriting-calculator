@@ -16,7 +16,7 @@ class simple_knn():
         # print("computed distances")
 
         num_test = dists.shape[0]
-        y_pred = np.zeros(num_test)
+        y_pred = np.zeros(num_test, dtype=object)
 
         for i in range(num_test):
             k_closest_y = []

@@ -1,8 +1,19 @@
 var socket;
 
 function onReceived(data){
-    console.log(parseInt(data.echo));
-    keyClicked(parseInt(data.echo));
+    console.log(data.echo);
+    if(data.echo === "/" || data.echo === "*" || data.echo === "-" || data.echo === "+" || data.echo === "+/-")
+    {
+        operatorClicked(null, data.echo);
+    }
+    else if(data.echo === "=")
+    {
+        equalClicked();
+    }
+    else
+    {
+        keyClicked(null, data.echo);
+    }
 }
 
 function send(img){
