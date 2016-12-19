@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_socketio import SocketIO
 import json
 from base64 import decodestring
@@ -12,7 +12,7 @@ app = Flask(__name__)
 socketio = SocketIO(app)
 
 k = 1
-training = True
+training = False
 label = "a"
 
 def load_data():
@@ -58,7 +58,7 @@ def handle_source(json_data):
     else:
         predicted = classifier.predict(arr, k)
         print(predicted)
-        socketio.emit('echo', {'echo': str(predicted[0])})
+        socketio.emit('echo', {'echo': str(predicted[0])}, room=request.sid)
 
 if __name__ == "__main__":
     socketio.run(app, "0.0.0.0", 5000)
