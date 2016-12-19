@@ -183,7 +183,6 @@
     {
         if(num === "none")
             num = $(this).text();
-        console.log(num);
         var displayText = getDisplayText();
         if((displayText === "0" && num !== ".")|| displayText === "+" || displayText === "-" || displayText === "*" || displayText === "/" || calculated)
         {
