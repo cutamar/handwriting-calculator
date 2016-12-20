@@ -1,6 +1,14 @@
-$(document).ready(function() 
-{
-
+    var num1 = new Big(0), num2 = new Big(0); 
+    var operator, result; 
+    var allCalculations = [];
+    var calculated = false;
+    var firstNumberEntered = false;
+    var decimalMarkUsed = false;
+    var selectedCalculationMethod;
+    var normalMode = true;
+    var drawingBoard;
+    var boundingBoxSize = 0, xStart = 0, yStart = 0;
+    
     function add(num1, num2) 
     {
         return num1.plus(num2);
@@ -82,12 +90,14 @@ $(document).ready(function()
             $("#keys-lower-part").hide();
             $("#drawing-board").show();
             createDrawingBoard();
+            $("#3").text("Predict");
             normalMode = false;
         }
         else
         {
             $("#drawing-board").hide();
             $("#keys-lower-part").show();
+            $("#3").text("/");
             normalMode = true;
         }
     }
@@ -136,7 +146,20 @@ $(document).ready(function()
         canvas2d.strokeStyle = lastStrokeStyle;
     }
 
-    function getImage()
+    function clearDrawingBoard()
+    {
+        var canvas = document.getElementsByTagName("canvas")[0];
+        var canvas2d = document.getElementsByTagName("canvas")[0].getContext("2d");
+        canvas2d.beginPath();
+        canvas2d.rect(0, 0, canvas.width, canvas.height);
+        var lastStrokeStyle = canvas2d.strokeStyle;
+        canvas2d.strokeStyle = "#ffffff";
+        canvas2d.fill(); 
+        canvas2d.strokeStyle = lastStrokeStyle;
+        drawBoundingBox();
+    }
+
+    function getScaledImage()
     {
         var canvas = document.getElementsByTagName("canvas")[0];
         var canvas2d = document.getElementsByTagName("canvas")[0].getContext("2d");
@@ -148,35 +171,18 @@ $(document).ready(function()
         newCanvas.getContext("2d").lineWidth = 3;
         newCanvas.getContext("2d").strokeStyle = "#ffffff"
         newCanvas.getContext("2d").strokeRect(0, 0, boundingBoxSize, boundingBoxSize);
-        var img = newCanvas.toDataURL("image/png");
+        canvas = document.createElement("canvas");
+        canvas.width = 32;
+        canvas.height = 32;
+        canvas.getContext("2d").drawImage(newCanvas, 0, 0, 32, 32)
+        var img = canvas.toDataURL("image/png");
         return img;
     }
 
-    var num1 = new Big(0), num2 = new Big(0); 
-    var operator, result; 
-    var allCalculations = [];
-    var calculated = false;
-    var firstNumberEntered = false;
-    var decimalMarkUsed = false;
-    var selectedCalculationMethod;
-    var normalMode = true;
-    var drawingBoard;
-    var boundingBoxSize = 0, xStart = 0, yStart = 0;
-
-    $("#keys-upper-part button.number").on("click", keyClicked);
-    $("#keys-lower-part button.number").on("click", keyClicked);
-    $("#keys-upper-part button.operator").on("click", operatorClicked);
-    $("#keys-lower-part button.operator").on("click", operatorClicked);
-    $("button#equals").on("click", equalClicked)
-    $("#tape").on("click", tapeToggle);
-    $("#clear-tape").on("click", clearTape);
-
-    // resize the canvas to fill browser window dynamically
-    window.addEventListener('resize', createDrawingBoard, false);
-
-    function keyClicked() 
+     function keyClicked(e, num = "none") 
     {
-        var num = $(this).text();
+        if(num === "none")
+            num = $(this).text();
         var displayText = getDisplayText();
         if((displayText === "0" && num !== ".")|| displayText === "+" || displayText === "-" || displayText === "*" || displayText === "/" || calculated)
         {
@@ -200,38 +206,39 @@ $(document).ready(function()
         setCurrentNum(getDisplayText());
     }
 
-    function operatorClicked() 
+    function operatorClicked(e, op = "none") 
     {
-        switch ($(this).text()) 
+        if(op === "none")
+            op = $(this).text();
+        switch (op) 
         {
             case "+":
                 changeDisplayTo("+");
-                operator = $(this).text()
+                operator = op;
                 selectedCalculationMethod = add;
                 firstNumberEntered = true;
                 decimalMarkUsed = false;
                 break;
             case "-":
                 changeDisplayTo("-");
-                operator = $(this).text()
+                operator = op;
                 selectedCalculationMethod = sub;
                 firstNumberEntered = true;
                 decimalMarkUsed = false;
                 break;
             case "*":
                 changeDisplayTo("*");
-                operator = $(this).text()
+                operator = op;
                 selectedCalculationMethod = mul;
                 firstNumberEntered = true;
                 decimalMarkUsed = false;
                 break;
             case "/":
                 changeDisplayTo("/");
-                operator = $(this).text()
+                operator = op;
                 selectedCalculationMethod = div;
                 firstNumberEntered = true;
                 decimalMarkUsed = false;
-                getImage();
                 break;
             case "C":
                 changeDisplayTo("0");
@@ -247,6 +254,10 @@ $(document).ready(function()
                 break;
             case "ABC":
                 toggleMode();
+                break;
+            case "Predict":
+                send(getScaledImage());
+                clearDrawingBoard();
                 break;
         }
     }
@@ -272,6 +283,20 @@ $(document).ready(function()
         allCalculations = [];
         updateTape();
     }
+
+$(document).ready(function() 
+{
+
+    $("#keys-upper-part button.number").on("click", keyClicked);
+    $("#keys-lower-part button.number").on("click", keyClicked);
+    $("#keys-upper-part button.operator").on("click", operatorClicked);
+    $("#keys-lower-part button.operator").on("click", operatorClicked);
+    $("button#equals").on("click", equalClicked)
+    $("#tape").on("click", tapeToggle);
+    $("#clear-tape").on("click", clearTape);
+
+    // resize the canvas to fill browser window dynamically
+    window.addEventListener('resize', createDrawingBoard, false);
 
     // Hide drawing board, because we are always starting in normal mode
     $("#drawing-board").hide();
