@@ -90,12 +90,14 @@
             $("#keys-lower-part").hide();
             $("#drawing-board").show();
             createDrawingBoard();
+            $("#3").text("Predict");
             normalMode = false;
         }
         else
         {
             $("#drawing-board").hide();
             $("#keys-lower-part").show();
+            $("#3").text("/");
             normalMode = true;
         }
     }
@@ -144,6 +146,19 @@
         canvas2d.strokeStyle = lastStrokeStyle;
     }
 
+    function clearDrawingBoard()
+    {
+        var canvas = document.getElementsByTagName("canvas")[0];
+        var canvas2d = document.getElementsByTagName("canvas")[0].getContext("2d");
+        canvas2d.beginPath();
+        canvas2d.rect(0, 0, canvas.width, canvas.height);
+        var lastStrokeStyle = canvas2d.strokeStyle;
+        canvas2d.strokeStyle = "#ffffff";
+        canvas2d.fill(); 
+        canvas2d.strokeStyle = lastStrokeStyle;
+        drawBoundingBox();
+    }
+
     function getScaledImage()
     {
         var canvas = document.getElementsByTagName("canvas")[0];
@@ -164,9 +179,10 @@
         return img;
     }
 
-     function keyClicked() 
+     function keyClicked(e, num = "none") 
     {
-        var num = $(this).text();
+        if(num === "none")
+            num = $(this).text();
         var displayText = getDisplayText();
         if((displayText === "0" && num !== ".")|| displayText === "+" || displayText === "-" || displayText === "*" || displayText === "/" || calculated)
         {
@@ -190,34 +206,36 @@
         setCurrentNum(getDisplayText());
     }
 
-    function operatorClicked() 
+    function operatorClicked(e, op = "none") 
     {
-        switch ($(this).text()) 
+        if(op === "none")
+            op = $(this).text();
+        switch (op) 
         {
             case "+":
                 changeDisplayTo("+");
-                operator = $(this).text()
+                operator = op;
                 selectedCalculationMethod = add;
                 firstNumberEntered = true;
                 decimalMarkUsed = false;
                 break;
             case "-":
                 changeDisplayTo("-");
-                operator = $(this).text()
+                operator = op;
                 selectedCalculationMethod = sub;
                 firstNumberEntered = true;
                 decimalMarkUsed = false;
                 break;
             case "*":
                 changeDisplayTo("*");
-                operator = $(this).text()
+                operator = op;
                 selectedCalculationMethod = mul;
                 firstNumberEntered = true;
                 decimalMarkUsed = false;
                 break;
             case "/":
                 changeDisplayTo("/");
-                operator = $(this).text()
+                operator = op;
                 selectedCalculationMethod = div;
                 firstNumberEntered = true;
                 decimalMarkUsed = false;
@@ -236,6 +254,10 @@
                 break;
             case "ABC":
                 toggleMode();
+                break;
+            case "Predict":
+                send(getScaledImage());
+                clearDrawingBoard();
                 break;
         }
     }
