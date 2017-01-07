@@ -1,0 +1,7 @@
+{
+  "name": "Handwriting Calculator",
+  "description": "A python flask app using socketio",
+  "repository": "https://github.com/cutamar/handwriting-calculator.git",
+  "logo": "http://www.unixstickers.com/image/cache/data/stickers/flask/Flask-text.sh-600x600.png",
+  "keywords": ["python", "flask", "machinelearning"]
+}
