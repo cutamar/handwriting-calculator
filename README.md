@@ -8,6 +8,10 @@ The reason I did this was, to improve my understanding of how the KNN algorithm 
 
 The code will be refactored in the near future, because it's unorganized, missing comments etc.
 
+Demo:
+
+[Click here](http://handwriting-calculator.herokuapp.com/)
+
 ## Training
 
 The 'train.csv' contains only 20 different samples for every number/character, entered by me.
